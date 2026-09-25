@@ -147,6 +147,10 @@ triggers:
     zone: zone.ibague
     event: enter
 conditions:
+  # Home Assistant can start this automation twice for one earthquake.
+  # This skips the second start.
+  - condition: template
+    value_template: "{{ this.context.parent_id != trigger.to_state.context.id }}"
   # Only earthquakes that are felt at the zone center (Weak or stronger).
   - condition: template
     value_template: "{{ trigger.to_state.attributes.shaking_mmi >= 1.5 }}"
@@ -166,7 +170,10 @@ actions:
         # Tapping the notification opens the map.
         url: "{{ trigger.to_state.attributes.map_url }}"
         clickAction: "{{ trigger.to_state.attributes.map_url }}"
+mode: queued
 ```
+
+Why the first condition? Home Assistant sometimes starts an automation twice for the same new earthquake, so you would get every notification twice. This is a bug in Home Assistant itself ([issue 183088](https://github.com/home-assistant/core/issues/183088)). The first condition skips the second start. `mode: queued` makes sure that when several earthquakes come in at the same time, each one gets its notification.
 
 Why skip old earthquakes? After **Reconfigure**, every earthquake in the list counts as new once. The time check stops a notification for each of them. If you turned on **Only earthquakes checked by SGC**, use 24 hours instead of 6, because the check can take a while. Changing settings with **Configure** or restarting Home Assistant does not make earthquakes count as new.
 
