@@ -27,12 +27,12 @@ Requires Home Assistant 2026.9 or newer.
 
 Select this button to open the integration in HACS, then select **Download**:
 
-[![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mm98&repository=ha_sgc_earthquakes&category=integration)
+[![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mm98&repository=ha-sgc-earthquakes&category=integration)
 
 Or add it yourself:
 
 1. Open **HACS**, select the three dots at the top right and pick **Custom repositories**.
-2. Enter `https://github.com/mm98/ha_sgc_earthquakes`, choose the type **Integration** and select **Add**.
+2. Enter `https://github.com/mm98/ha-sgc-earthquakes`, choose the type **Integration** and select **Add**.
 3. Search HACS for **SGC Earthquakes**, open it and select **Download**.
 4. Restart Home Assistant.
 
@@ -178,7 +178,7 @@ Why skip old earthquakes? After **Reconfigure**, every earthquake in the list co
 
 ## Problems and ideas
 
-Tell us on [GitHub](https://github.com/mm98/ha_sgc_earthquakes/issues). It helps to add the diagnostics: on the integration's page, open the three dots and pick **Download diagnostics**. They contain your settings and the earthquakes found, but not where your zone is.
+Tell us on [GitHub](https://github.com/mm98/ha-sgc-earthquakes/issues). It helps to add the diagnostics: on the integration's page, open the three dots and pick **Download diagnostics**. They contain your settings and the earthquakes found, but not where your zone is.
 
 ## Credits
 

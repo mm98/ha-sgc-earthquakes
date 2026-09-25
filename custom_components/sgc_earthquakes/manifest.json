@@ -4,10 +4,10 @@
 	"codeowners": ["@mm98"],
 	"config_flow": true,
 	"dependencies": ["zone"],
-	"documentation": "https://github.com/mm98/ha_sgc_earthquakes",
+	"documentation": "https://github.com/mm98/ha-sgc-earthquakes",
 	"integration_type": "service",
 	"iot_class": "cloud_polling",
-	"issue_tracker": "https://github.com/mm98/ha_sgc_earthquakes/issues",
+	"issue_tracker": "https://github.com/mm98/ha-sgc-earthquakes/issues",
 	"requirements": [],
 	"version": "0.12.0"
 }
