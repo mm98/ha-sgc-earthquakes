@@ -1,159 +1,132 @@
 # SGC Earthquakes for Home Assistant
 
-Shows earthquakes from the Servicio Geológico Colombiano (SGC) that happen
-inside one of your zones. It works like the built-in USGS earthquake
-integration: every earthquake becomes a `geo_location` entity, so it shows on
-the map and works with the geo_location trigger. The difference is the source
-(the SGC lists at https://www.sgc.gov.co/sismos) and that the area is a normal
-Home Assistant zone, set up in the UI instead of YAML.
+See earthquakes from the Servicio Geológico Colombiano (SGC), Colombia's geological survey, in Home Assistant. You pick an area, and every earthquake inside it shows up on your map. Sensors tell you about the latest and the strongest earthquakes, and about how strongly each one was probably felt in your area.
 
-The texts are in English, Danish and Spanish (`es` and `es-419`, the
-Latin American Spanish most people in Colombia pick in Home Assistant).
+It works like the USGS earthquake integration that comes with Home Assistant, but it uses SGC's earthquake lists, which cover Colombia in more detail.
 
-## Installation
+Available in English, Danish and Spanish.
+
+## Before you start: make a zone
+
+The integration only shows earthquakes inside one of your Home Assistant zones, so you need a zone that covers the area you care about.
+
+Make the zone big, because strong earthquakes are felt far away: 100 to 200 km is a good size. The zone must be at least 1 km. Your Home zone is usually only 100 meters, so make a new zone for this.
+
+1. Go to **Settings > Areas, labels & zones**, open **Zones** and select **Create zone**.
+2. Enter a **Name**, for example your city.
+3. Drag the pin on the map to the center of the area.
+4. Enter the **Radius** in meters, for example `200000` for 200 km.
+5. Turn on **Passive**. Without it, someone who is away from home but inside this big zone shows as being in the zone, instead of away.
+6. Select **Create**.
+
+## Install
 
 Requires Home Assistant 2026.9 or newer.
 
-1. Copy this folder to `custom_components/sgc_earthquakes` in your Home
-   Assistant configuration folder, including the `translations` and `brand`
-   folders inside it. Without `translations` every form shows raw keys like
-   `period_hours`, and without `brand` the integration has no icon.
-2. Restart Home Assistant.
-3. Make a large zone for the area you care about under
-   **Settings > Areas, labels & zones > Zones**, for example 200 km around
-   Ibagué.
-4. Go to **Settings > Devices & services > Add integration** and pick
-   **SGC Earthquakes**.
+### With HACS
 
-## Settings
+Select this button to open the integration in HACS, then select **Download**:
+
+[![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mm98&repository=ha_sgc_earthquakes&category=integration)
+
+Or add it yourself:
+
+1. Open **HACS**, select the three dots at the top right and pick **Custom repositories**.
+2. Enter `https://github.com/mm98/ha_sgc_earthquakes`, choose the type **Integration** and select **Add**.
+3. Search HACS for **SGC Earthquakes**, open it and select **Download**.
+4. Restart Home Assistant.
+
+### Without HACS
+
+1. Copy the `custom_components/sgc_earthquakes` folder from this repository into the `custom_components` folder of your Home Assistant configuration.
+2. Restart Home Assistant.
+
+## Set up
+
+Go to **Settings > Devices & services**, select **Add integration** and pick **SGC Earthquakes**. Or select this button:
+
+[![Add the SGC Earthquakes integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=sgc_earthquakes)
+
+Then pick your zone and choose which earthquakes to show:
 
 | Setting | What it does |
 |---|---|
-| Zone | Earthquakes count when their center is inside this zone. The zone's own radius is used. Move or resize the zone later and the list follows, without a restart. |
-| Earthquake list | Which SGC list to read (see below). |
-| Minimum magnitude | Smaller earthquakes are left out. Default 3.0. |
-| Minimum shaking at zone center | Leaves out earthquakes that would be felt less than this at the zone center (see **Estimated shaking** below). Any (the default), Weak, Light, Moderate or Strong. Unlike the magnitude, it weighs in distance and depth, so a strong earthquake far away can pass while a small one nearby does not. |
-| Only earthquakes from the last (hours) | For example 24 for the last day. Empty shows the whole list. An earthquake drops off within 5 minutes after it gets older than this. |
-| Only earthquakes checked by SGC | Waits until an SGC analyst has checked the earthquake. The first automatic location can be far off (one moved 140 km on review), so this avoids alerts for the wrong place. The check usually takes under half an hour, but some small earthquakes wait a day or more. |
-| Map links open in | Google Maps (the default) works on any device. Apple Maps opens the Maps app on iPhone, iPad and Mac (iOS 18.4 or macOS 15.4 and newer) and labels the pin with the magnitude, for example M 4.2. Google's links cannot label the pin. |
+| Zone | The area to watch. |
+| Earthquake list | Which SGC list to use. See the lists below. |
+| Minimum magnitude | Leaves out smaller earthquakes. The default is 3.0. |
+| Minimum shaking at zone center | Only shows earthquakes that are felt at least this much at the center of your zone: Any (the default), Weak, Light, Moderate or Strong. See **How strongly was it felt?** below. |
+| Only earthquakes from the last | For example 24 hours for the last day. Leave it empty to show the whole list. |
+| Only earthquakes checked by SGC | Waits until an SGC expert has checked the earthquake. The first, automatic location can be wrong, sometimes by more than 100 km. The check usually takes less than half an hour, but small earthquakes can wait a day or more. |
+| Map links open in | Google Maps works everywhere. Apple Maps opens the Maps app on iPhone, iPad and Mac (iOS 18.4 or macOS 15.4 and newer) and shows the magnitude on the pin. |
 
-Everything after the list can be changed later under **Configure**, and the
-change applies at once, without a reload. **Reconfigure** swaps the zone or
-the list, which reloads the integration. You can add the same zone more than
-once with different lists.
+You can change these settings later with **Configure** on the integration. To use another zone or list, pick **Reconfigure**. You can also add the integration more than once, for example for two different zones.
 
-The lists, as the SGC website offers them:
+The lists are the same as on the SGC website:
 
-| List | Holds |
+| List | What is in it |
 |---|---|
-| Last 5 days, magnitude 2.0 and up | The default, and what the SGC site shows first |
-| Last 5 days, all magnitudes | Down to about magnitude 0.5 |
-| Last 30 days, notable earthquakes | About 150 picked earthquakes |
-| Last 60 days, magnitude 4.0 and up | Also far outside Colombia |
-| International earthquakes | Worldwide |
+| Last 5 days, magnitude 2.0 and up | The default, and the list the SGC website shows first |
+| Last 5 days, all magnitudes | Also the very small earthquakes |
+| Last 30 days, notable earthquakes | About 150 earthquakes that SGC picked out |
+| Last 60 days, magnitude 4.0 and up | Also earthquakes far outside Colombia |
+| International earthquakes | Earthquakes around the world |
 
-## Entities
+## What you get
 
-One `geo_location` entity per earthquake, named like USGS names them, for
-example `M 4.2 - Chaparral - Tolima, Colombia`. The entity id is SGC's own id
-for the earthquake, for example `geo_location.sgc2026snqtlv`. Names repeat (a
-swarm near Chaparral gave 50 earthquakes named `M 2.5 - Chaparral - Tolima,
-Colombia` in 5 days) and SGC's review can change them, but the id stays the
-same. SGC builds its ids from the time, so sorting by entity id also sorts by
-time. The state is the distance from
-the zone center in km. Attributes: magnitude, magnitude type, place, nearby
-towns, depth in km, time, the time in Colombia (`time_source`), when SGC last
-changed it, status (automatic or reviewed), reporting agency, felt reports,
-the estimated shaking at the zone center (`shaking_mmi` as a number,
-`shaking` as a word, and `color`), the shaking SGC measured at the earthquake
-when it has a value (`intensity` as a number, `intensity_level` as a word), a
-link to the SGC page for the earthquake, and a map link (`map_url`) that
-opens the earthquake's location in Google Maps or Apple Maps, whichever you picked. Both
-links are clickable in the entity dialog. Like the USGS entities, each one
-also has `icon: mdi:pulse`, so a map card with `label_mode: icon` shows the
-pulse icon.
+### Earthquakes on the map
 
-About the times: **Time** and **Last changed by SGC** are stored in UTC and
-the entity dialog shows them in your own time zone. **Time in Colombia** is
-text, as SGC shows it, for example `2026/09/23 04:04 AM`, so it always stays
-Colombian time (UTC-5, no summer time). It uses slashes because the dialog
-treats text starting with `2026-09-23` as a date and converts it. In
-templates, `time` is UTC: use `as_local(trigger.to_state.attributes.time)`
-for your own time.
+Every earthquake in your zone shows on the Home Assistant map, with a name like `M 4.2 - Chaparral - Tolima, Colombia`: the magnitude and the place. Its value is the distance from your zone center in km. Select an earthquake to see:
 
-SGC reviews automatic earthquakes after a few minutes to a few hours. The
-magnitude and location can change, and the entity is updated in place. If a
-review moves an earthquake out of the zone or below the minimum magnitude, the
-entity is removed. With **Only earthquakes checked by SGC** on, an earthquake
-only appears after the review.
+- the magnitude, the place and the nearby towns
+- the depth
+- the time in your own time zone, and the time in Colombia
+- whether SGC has checked it yet
+- how strongly it was probably felt at your zone center, as a word, a number and a color
+- how strongly SGC measured it where it happened, when SGC has that
+- how many people reported feeling it
+- links to the earthquake on the SGC website and on a map
 
-Sensors on the **SGC Earthquakes <zone>** device:
+When SGC corrects an earthquake, for example its magnitude or place, the map follows. An earthquake disappears again when it gets older than your time limit or leaves SGC's list.
+
+### Sensors
 
 | Sensor | Shows |
 |---|---|
-| Earthquakes in zone | How many earthquakes are shown, after the filters |
-| Magnitude of latest earthquake | With place, time, distance, estimated shaking, color and both links as attributes |
-| Magnitude of strongest earthquake | The same for the highest magnitude among the earthquakes shown now |
-| Magnitude of strongest earthquake (historic) | The highest magnitude since setup, also after that earthquake has left the list |
-| Strongest shaking at zone center | The highest estimated shaking (MMI) among the earthquakes shown now |
-| Strongest shaking at zone center (historic) | The highest estimated shaking since setup, kept the same way |
+| Earthquakes in zone | How many earthquakes are shown right now |
+| Magnitude of latest earthquake | The newest earthquake, with its place, time and links |
+| Magnitude of strongest earthquake | The highest magnitude among the earthquakes shown now |
+| Magnitude of strongest earthquake (historic) | The highest magnitude since you set up the integration, also after that earthquake is gone |
+| Strongest shaking at zone center | The strongest shaking among the earthquakes shown now |
+| Strongest shaking at zone center (historic) | The strongest shaking since you set up the integration |
 
-The sensors without "(historic)" follow your filters, for example only the
-last 24 hours.
-The historic sensors keep their record across restarts, and follow SGC's
-corrections while the earthquake is still in the list. They start over when
-you pick another zone or list under **Reconfigure**.
+The historic sensors keep their record when Home Assistant restarts. They start over when you pick another zone or list.
 
-## Estimated shaking
+## How strongly was it felt?
 
-Magnitude alone says little about what you feel: an M7.7 200 km away shakes
-the zone center more than an M4 right below it. The integration therefore
-estimates the shaking at the zone center on the Modified Mercalli Intensity
-(MMI) scale, which USGS and SGC also use. It uses the intensity prediction
-equation of Allen, Wald and Worden (2012) for active crustal regions, with the
-coefficients from OpenQuake:
+The magnitude alone does not tell you how much an earthquake shook your area. A big earthquake far away can shake more than a small one right below you. So for every earthquake, the integration estimates the shaking at the center of your zone from the magnitude, the distance and the depth. It uses the 1 to 12 scale (Modified Mercalli) that SGC and the USGS also use:
 
-```
-R   = sqrt(distance^2 + depth^2)          distance to the hypocenter, in km
-Rm  = -0.209 + 2.042 * exp(M - 5)
-MMI = 2.085 + 1.428*M - 1.402*ln(sqrt(R^2 + Rm^2)) + 0.078*ln(R/50)   (last term only when R > 50 km)
-```
-
-The number is named with the USGS ShakeMap words, and the color follows the
-damage ShakeMap expects:
-
-| MMI | Shaking | Damage | Color |
+| Scale | Shaking | Possible damage | Color |
 |---|---|---|---|
-| I | Not felt | None | green |
-| II to III | Weak | None | green |
-| IV | Light | None | yellow |
-| V | Moderate | Very light | yellow |
-| VI | Strong | Light | orange |
-| VII | Very strong | Moderate | red |
-| VIII and up | Severe, Violent, Extreme | Moderate to very heavy | red |
-
-The colors are plain names that work in Home Assistant cards and in CSS.
+| 1 | Not felt | None | Green |
+| 2 to 3 | Weak | None | Green |
+| 4 | Light | None | Yellow |
+| 5 | Moderate | Very light | Yellow |
+| 6 | Strong | Light | Orange |
+| 7 | Very strong | Moderate | Red |
+| 8 to 12 | Severe, violent or extreme | Moderate to very heavy | Red |
 
 Keep in mind:
 
-- It is an estimate, usually within one step of what is measured. Checked
-  against the 13 earthquakes in a sample where SGC measured an intensity, the
-  estimate for the earthquake's own location was 0.4 higher on average and
-  never more than 1.0 off.
-- It is for the zone center only. Places nearer the earthquake shake more.
-- Local ground is not included. Soft soil can add a step: the 1999 Armenia
-  earthquake was M6.2 but reached IX in the city.
-- The equation is made for shallow earthquakes. Depth still counts, but it is
-  less exact for deep ones, such as those around 150 km below Bucaramanga.
-- SGC's own **Measured shaking at the earthquake** (`intensity`) is the
-  strongest shaking its stations recorded where the earthquake happened. It
-  is filled in for only a few earthquakes, and it is not the shaking at your
-  zone center.
+- It is an estimate. It is usually within one step of what is really measured.
+- It is for the center of your zone. Places closer to the earthquake shake more.
+- Soft ground can make the shaking a step stronger.
+- **Measured shaking at the earthquake** is SGC's own measurement where the earthquake happened, not in your zone. SGC only has it for some earthquakes.
 
-## Map
+## Examples
 
-The map panel shows the earthquakes by itself. For a map card, use the source
-`sgc_earthquakes`, and label the markers with the magnitude if you like:
+### A map card
+
+The **Map** in the sidebar shows the earthquakes by itself. To put them on a dashboard, add a **Map** card, open its code editor and paste this. It shows the magnitude on each earthquake:
 
 ```yaml
 type: map
@@ -163,7 +136,9 @@ geo_location_sources:
     attribute: magnitude
 ```
 
-## Notify on an earthquake
+### A notification for each earthquake you would feel
+
+Create a new automation, open the three dots at the top right, pick **Edit in YAML** and paste this. Change `zone.ibague` to your own zone.
 
 ```yaml
 triggers:
@@ -172,9 +147,12 @@ triggers:
     zone: zone.ibague
     event: enter
 conditions:
-  # Only earthquakes you would feel at the zone center (Weak or more).
+  # Only earthquakes that are felt at the zone center (Weak or stronger).
   - condition: template
     value_template: "{{ trigger.to_state.attributes.shaking_mmi >= 1.5 }}"
+  # Skip earthquakes older than 6 hours.
+  - condition: template
+    value_template: "{{ now() - trigger.to_state.attributes.time < timedelta(hours=6) }}"
 actions:
   - action: notify.notify
     data:
@@ -185,40 +163,27 @@ actions:
         Estimated shaking there:
         {{ trigger.to_state.attributes.shaking | replace('_', ' ') }}.
       data:
-        # Tapping the notification in the companion app opens the map
-        # (url on iPhone, clickAction on Android).
+        # Tapping the notification opens the map.
         url: "{{ trigger.to_state.attributes.map_url }}"
         clickAction: "{{ trigger.to_state.attributes.map_url }}"
 ```
 
-Things to know:
+Why skip old earthquakes? After **Reconfigure**, every earthquake in the list counts as new once. The time check stops a notification for each of them. If you turned on **Only earthquakes checked by SGC**, use 24 hours instead of 6, because the check can take a while. Changing settings with **Configure** or restarting Home Assistant does not make earthquakes count as new.
 
-- `leave` is not useful here. Earthquakes leave when they get older than the
-  period or drop out of the list.
-- Saving settings under **Configure** keeps the earthquake entities, so the
-  trigger does not fire again for them, for example when you switch the map
-  app. An earthquake that a changed filter lets through does count as
-  entering, and one it hides as leaving.
-- **Reconfigure** and reloading the integration recreate every earthquake, so
-  the trigger then sees them all as new. A Home Assistant restart does not do
-  this. To be safe, you can add a condition on the earthquake's time, for
-  example `{{ now() - trigger.to_state.attributes.time < timedelta(hours=6) }}`.
-  With **Only earthquakes checked by SGC**, allow more time, since it holds
-  earthquakes back until SGC has checked them.
-- If the download fails, the earthquakes stay as they were (the sensors show
-  unavailable), so a network problem does not look like earthquakes leaving.
+## Good to know
 
-## How it reads the SGC list
+- New earthquakes show up about 3 to 8 minutes after they happen.
+- If your internet or the SGC website is down, the earthquakes stay on the map, and the sensors show as unavailable until it works again.
+- Times are shown in your own time zone. **Time in Colombia** always shows the Colombian time, as SGC gives it.
 
-- The SGC server refuses Home Assistant's normal User-Agent, so the
-  integration sends a browser-style one.
-- SGC writes coordinates as latitude, longitude, depth. Standard GeoJSON is
-  the other way round, so generic GeoJSON tools put these earthquakes in the
-  wrong place.
-- The list is checked every 5 minutes, and only downloaded again when it
-  changed.
+## Problems and ideas
 
-## Diagnostics
+Tell us on [GitHub](https://github.com/mm98/ha_sgc_earthquakes/issues). It helps to add the diagnostics: on the integration's page, open the three dots and pick **Download diagnostics**. They contain your settings and the earthquakes found, but not where your zone is.
 
-**Download diagnostics** on the integration or device page gives the settings,
-the zone radius (not its location) and the earthquakes found.
+## Credits
+
+The earthquake data comes from the [Servicio Geológico Colombiano](https://www.sgc.gov.co/sismos). This integration is not made by SGC or connected to it.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
