@@ -130,11 +130,14 @@ The **Map** in the sidebar shows the earthquakes by itself. To put them on a das
 
 ```yaml
 type: map
+entities:
+  - entity: zone.ibague
 geo_location_sources:
   - source: sgc_earthquakes
     label_mode: attribute
     attribute: magnitude
 ```
+<img width="100%" alt="image" src="https://github.com/user-attachments/assets/445e92e5-aba5-4ed1-9930-7bc3558f534a" />
 
 ### A notification for each earthquake you would feel
 
