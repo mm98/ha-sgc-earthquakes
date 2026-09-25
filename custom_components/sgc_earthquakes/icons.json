@@ -1,0 +1,24 @@
+{
+	"entity": {
+		"sensor": {
+			"earthquakes": {
+				"default": "mdi:pulse"
+			},
+			"latest_magnitude": {
+				"default": "mdi:clock-alert-outline"
+			},
+			"strongest_magnitude": {
+				"default": "mdi:chart-bell-curve"
+			},
+			"strongest_magnitude_historic": {
+				"default": "mdi:history"
+			},
+			"strongest_shaking": {
+				"default": "mdi:vibrate"
+			},
+			"strongest_shaking_historic": {
+				"default": "mdi:history"
+			}
+		}
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"domain": "sgc_earthquakes",
+	"name": "SGC Earthquakes (Servicio Geológico Colombiano)",
+	"codeowners": ["@mm98"],
+	"config_flow": true,
+	"dependencies": ["zone"],
+	"integration_type": "service",
+	"iot_class": "cloud_polling",
+	"requirements": [],
+	"version": "0.12.0"
+}

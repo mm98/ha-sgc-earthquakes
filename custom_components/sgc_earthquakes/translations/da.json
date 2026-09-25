@@ -1,0 +1,507 @@
+{
+	"config": {
+		"step": {
+			"user": {
+				"title": "Jordskælv i en zone",
+				"description": "Se jordskælv fra Servicio Geológico Colombiano (SGC) inden for en af dine zoner, på kortet og som sensorer. Brug en stor zone, for eksempel 100 km.",
+				"data": {
+					"zone": "Zone",
+					"feed": "Jordskælvsliste",
+					"minimum_magnitude": "Mindste styrke",
+					"minimum_shaking": "Mindste rystelse i zonens centrum",
+					"period_hours": "Kun jordskælv fra de seneste",
+					"reviewed_only": "Kun jordskælv tjekket af SGC",
+					"map_app": "Kortlinks åbner i"
+				},
+				"data_description": {
+					"zone": "Jordskælv inden for denne zone vises.",
+					"feed": "Hvilken jordskælvsliste fra SGC der bruges.",
+					"minimum_magnitude": "Udelad mindre jordskælv.",
+					"minimum_shaking": "Hvor kraftigt et jordskælv skal mærkes i zonens centrum.",
+					"period_hours": "Lad feltet stå tomt for at vise hele listen.",
+					"reviewed_only": "Vent, til SGC har tjekket sted og styrke.",
+					"map_app": "Hvor links til et jordskælvs placering åbner."
+				}
+			},
+			"reconfigure": {
+				"title": "Skift zone eller liste",
+				"description": "Vælg en anden zone eller jordskælvsliste.",
+				"data": {
+					"zone": "Zone",
+					"feed": "Jordskælvsliste"
+				},
+				"data_description": {
+					"zone": "Jordskælv inden for denne zone vises.",
+					"feed": "Hvilken jordskælvsliste fra SGC der bruges."
+				}
+			}
+		},
+		"error": {
+			"zone_not_found": "Vælg en zone. Den valgte entitet er ikke en zone eller findes ikke.",
+			"zone_too_small": "Zonen {zone} har en radius på kun {radius} m, så næsten intet jordskælv vil ligge inden for den. Gør zonen større, eller vælg en anden.",
+			"blocked": "SGC's server afviste forespørgslen. Prøv igen senere.",
+			"cannot_connect": "Kunne ikke læse jordskælvslisten fra SGC. Tjek din internetforbindelse, og prøv igen.",
+			"already_configured": "Denne zone bruger allerede denne jordskælvsliste."
+		},
+		"abort": {
+			"already_configured": "Denne zone bruger allerede denne jordskælvsliste.",
+			"reconfigure_successful": "Zonen og listen er skiftet."
+		}
+	},
+	"options": {
+		"step": {
+			"init": {
+				"title": "Filtre og kortlinks",
+				"description": "Vælg, hvilke jordskælv der vises, og hvor kortlinks åbner.",
+				"data": {
+					"minimum_magnitude": "Mindste styrke",
+					"minimum_shaking": "Mindste rystelse i zonens centrum",
+					"period_hours": "Kun jordskælv fra de seneste",
+					"reviewed_only": "Kun jordskælv tjekket af SGC",
+					"map_app": "Kortlinks åbner i"
+				},
+				"data_description": {
+					"minimum_magnitude": "Udelad mindre jordskælv.",
+					"minimum_shaking": "Hvor kraftigt et jordskælv skal mærkes i zonens centrum.",
+					"period_hours": "Lad feltet stå tomt for at vise hele listen.",
+					"reviewed_only": "Vent, til SGC har tjekket sted og styrke.",
+					"map_app": "Hvor links til et jordskælvs placering åbner."
+				}
+			}
+		}
+	},
+	"selector": {
+		"feed": {
+			"options": {
+				"five_days_2": "Seneste 5 dage, styrke 2,0 og op",
+				"five_days_all": "Seneste 5 dage, alle styrker",
+				"thirty_days_important": "Seneste 30 dage, markante jordskælv",
+				"sixty_days_4": "Seneste 60 dage, styrke 4,0 og op",
+				"international": "Internationale jordskælv"
+			}
+		},
+		"minimum_shaking": {
+			"options": {
+				"any": "Alle",
+				"weak": "Svag eller mere",
+				"light": "Let eller mere",
+				"moderate": "Moderat eller mere",
+				"strong": "Kraftig eller mere"
+			}
+		},
+		"period_hours": {
+			"unit_of_measurement": {
+				"hours": "timer"
+			}
+		},
+		"map_app": {
+			"options": {
+				"google_maps": "Google Maps",
+				"apple_maps": "Apple Maps"
+			}
+		}
+	},
+	"entity": {
+		"geo_location": {
+			"earthquake": {
+				"state_attributes": {
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"magnitude_type": {
+						"name": "Styrketype"
+					},
+					"place": {
+						"name": "Sted"
+					},
+					"nearby_towns": {
+						"name": "Nærmeste byer"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"updated": {
+						"name": "Sidst ændret af SGC"
+					},
+					"status": {
+						"name": "Status",
+						"state": {
+							"automatic": "Endnu ikke tjekket af SGC",
+							"manual": "Tjekket af SGC"
+						}
+					},
+					"agency": {
+						"name": "Rapporteret af"
+					},
+					"felt_reports": {
+						"name": "Personer, der har meldt, at de mærkede det"
+					},
+					"intensity": {
+						"name": "Målt rystelse ved jordskælvet (MMI)"
+					},
+					"intensity_level": {
+						"name": "Målt rystelse ved jordskælvet",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			}
+		},
+		"sensor": {
+			"earthquakes": {
+				"name": "Jordskælv i zonen"
+			},
+			"latest_magnitude": {
+				"name": "Styrke på seneste jordskælv",
+				"state_attributes": {
+					"place": {
+						"name": "Sted"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"distance_km": {
+						"name": "Afstand fra zonens centrum i km"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			},
+			"strongest_magnitude": {
+				"name": "Styrke på kraftigste jordskælv",
+				"state_attributes": {
+					"place": {
+						"name": "Sted"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"distance_km": {
+						"name": "Afstand fra zonens centrum i km"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			},
+			"strongest_magnitude_historic": {
+				"name": "Styrke på kraftigste jordskælv (historisk)",
+				"state_attributes": {
+					"place": {
+						"name": "Sted"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"distance_km": {
+						"name": "Afstand fra zonens centrum i km"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			},
+			"strongest_shaking": {
+				"name": "Kraftigste rystelse i zonens centrum",
+				"state_attributes": {
+					"place": {
+						"name": "Sted"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"distance_km": {
+						"name": "Afstand fra zonens centrum i km"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			},
+			"strongest_shaking_historic": {
+				"name": "Kraftigste rystelse i zonens centrum (historisk)",
+				"state_attributes": {
+					"place": {
+						"name": "Sted"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"distance_km": {
+						"name": "Afstand fra zonens centrum i km"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			}
+		}
+	},
+	"exceptions": {
+		"blocked": {
+			"message": "SGC's server afviste forespørgslen på {url}. Prøv igen senere."
+		},
+		"cannot_connect": {
+			"message": "Kunne ikke læse jordskælvslisten fra SGC {url}: {error}"
+		},
+		"zone_not_found": {
+			"message": "Zonen {zone} findes ikke længere. Vælg en anden zone under Genkonfigurér."
+		}
+	}
+}

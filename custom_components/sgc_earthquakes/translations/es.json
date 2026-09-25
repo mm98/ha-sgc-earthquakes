@@ -1,0 +1,507 @@
+{
+	"config": {
+		"step": {
+			"user": {
+				"title": "Sismos en una zona",
+				"description": "Muestra los sismos del Servicio Geológico Colombiano (SGC) dentro de una de tus zonas, en el mapa y como sensores. Usa una zona grande, por ejemplo de 100 km.",
+				"data": {
+					"zone": "Zona",
+					"feed": "Lista de sismos",
+					"minimum_magnitude": "Magnitud mínima",
+					"minimum_shaking": "Intensidad mínima en el centro de la zona",
+					"period_hours": "Solo sismos de las últimas",
+					"reviewed_only": "Solo sismos revisados por el SGC",
+					"map_app": "Los enlaces al mapa abren en"
+				},
+				"data_description": {
+					"zone": "Se muestran los sismos dentro de esta zona.",
+					"feed": "Qué lista de sismos del SGC se usa.",
+					"minimum_magnitude": "Omite los sismos más pequeños.",
+					"minimum_shaking": "Con qué fuerza se debe sentir un sismo en el centro de la zona.",
+					"period_hours": "Déjalo vacío para mostrar toda la lista.",
+					"reviewed_only": "Espera a que el SGC revise el lugar y la magnitud.",
+					"map_app": "Dónde se abren los enlaces a la ubicación de un sismo."
+				}
+			},
+			"reconfigure": {
+				"title": "Cambiar zona o lista",
+				"description": "Elige otra zona u otra lista de sismos.",
+				"data": {
+					"zone": "Zona",
+					"feed": "Lista de sismos"
+				},
+				"data_description": {
+					"zone": "Se muestran los sismos dentro de esta zona.",
+					"feed": "Qué lista de sismos del SGC se usa."
+				}
+			}
+		},
+		"error": {
+			"zone_not_found": "Elige una zona. La entidad elegida no es una zona o no existe.",
+			"zone_too_small": "La zona {zone} tiene un radio de solo {radius} m, así que casi ningún sismo quedaría dentro. Agranda la zona o elige otra.",
+			"blocked": "El servidor del SGC rechazó la solicitud. Inténtalo de nuevo más tarde.",
+			"cannot_connect": "No se pudo leer la lista de sismos del SGC. Revisa tu conexión a internet e inténtalo de nuevo.",
+			"already_configured": "Esta zona ya usa esta lista de sismos."
+		},
+		"abort": {
+			"already_configured": "Esta zona ya usa esta lista de sismos.",
+			"reconfigure_successful": "Se cambiaron la zona y la lista."
+		}
+	},
+	"options": {
+		"step": {
+			"init": {
+				"title": "Filtros y enlaces al mapa",
+				"description": "Elige qué sismos se muestran y dónde se abren los enlaces al mapa.",
+				"data": {
+					"minimum_magnitude": "Magnitud mínima",
+					"minimum_shaking": "Intensidad mínima en el centro de la zona",
+					"period_hours": "Solo sismos de las últimas",
+					"reviewed_only": "Solo sismos revisados por el SGC",
+					"map_app": "Los enlaces al mapa abren en"
+				},
+				"data_description": {
+					"minimum_magnitude": "Omite los sismos más pequeños.",
+					"minimum_shaking": "Con qué fuerza se debe sentir un sismo en el centro de la zona.",
+					"period_hours": "Déjalo vacío para mostrar toda la lista.",
+					"reviewed_only": "Espera a que el SGC revise el lugar y la magnitud.",
+					"map_app": "Dónde se abren los enlaces a la ubicación de un sismo."
+				}
+			}
+		}
+	},
+	"selector": {
+		"feed": {
+			"options": {
+				"five_days_2": "Últimos 5 días, magnitud 2.0 o más",
+				"five_days_all": "Últimos 5 días, todas las magnitudes",
+				"thirty_days_important": "Últimos 30 días, sismos destacados",
+				"sixty_days_4": "Últimos 60 días, magnitud 4.0 o más",
+				"international": "Sismos internacionales"
+			}
+		},
+		"minimum_shaking": {
+			"options": {
+				"any": "Cualquiera",
+				"weak": "Débil o más",
+				"light": "Leve o más",
+				"moderate": "Moderado o más",
+				"strong": "Fuerte o más"
+			}
+		},
+		"period_hours": {
+			"unit_of_measurement": {
+				"hours": "horas"
+			}
+		},
+		"map_app": {
+			"options": {
+				"google_maps": "Google Maps",
+				"apple_maps": "Apple Maps"
+			}
+		}
+	},
+	"entity": {
+		"geo_location": {
+			"earthquake": {
+				"state_attributes": {
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"magnitude_type": {
+						"name": "Tipo de magnitud"
+					},
+					"place": {
+						"name": "Lugar"
+					},
+					"nearby_towns": {
+						"name": "Municipios cercanos"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"updated": {
+						"name": "Último cambio del SGC"
+					},
+					"status": {
+						"name": "Estado",
+						"state": {
+							"automatic": "Aún sin revisar por el SGC",
+							"manual": "Revisado por el SGC"
+						}
+					},
+					"agency": {
+						"name": "Reportado por"
+					},
+					"felt_reports": {
+						"name": "Personas que reportaron haberlo sentido"
+					},
+					"intensity": {
+						"name": "Intensidad instrumental (MMI)"
+					},
+					"intensity_level": {
+						"name": "Intensidad instrumental",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			}
+		},
+		"sensor": {
+			"earthquakes": {
+				"name": "Sismos en la zona"
+			},
+			"latest_magnitude": {
+				"name": "Magnitud del último sismo",
+				"state_attributes": {
+					"place": {
+						"name": "Lugar"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"distance_km": {
+						"name": "Distancia al centro de la zona en km"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			},
+			"strongest_magnitude": {
+				"name": "Magnitud del sismo más fuerte",
+				"state_attributes": {
+					"place": {
+						"name": "Lugar"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"distance_km": {
+						"name": "Distancia al centro de la zona en km"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			},
+			"strongest_magnitude_historic": {
+				"name": "Magnitud del sismo más fuerte (histórica)",
+				"state_attributes": {
+					"place": {
+						"name": "Lugar"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"distance_km": {
+						"name": "Distancia al centro de la zona en km"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			},
+			"strongest_shaking": {
+				"name": "Mayor intensidad en el centro de la zona",
+				"state_attributes": {
+					"place": {
+						"name": "Lugar"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"distance_km": {
+						"name": "Distancia al centro de la zona en km"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			},
+			"strongest_shaking_historic": {
+				"name": "Mayor intensidad en el centro de la zona (histórica)",
+				"state_attributes": {
+					"place": {
+						"name": "Lugar"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"distance_km": {
+						"name": "Distancia al centro de la zona en km"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			}
+		}
+	},
+	"exceptions": {
+		"blocked": {
+			"message": "El servidor del SGC rechazó la solicitud de {url}. Inténtalo de nuevo más tarde."
+		},
+		"cannot_connect": {
+			"message": "No se pudo leer la lista de sismos del SGC {url}: {error}"
+		},
+		"zone_not_found": {
+			"message": "La zona {zone} ya no existe. Elige otra zona en Reconfigurar."
+		}
+	}
+}

@@ -1,0 +1,507 @@
+{
+	"config": {
+		"step": {
+			"user": {
+				"title": "Earthquakes in a zone",
+				"description": "See earthquakes from the Colombian Geological Survey (SGC) inside one of your zones, on the map and as sensors. Use a large zone, for example 100 km.",
+				"data": {
+					"zone": "Zone",
+					"feed": "Earthquake list",
+					"minimum_magnitude": "Minimum magnitude",
+					"minimum_shaking": "Minimum shaking at zone center",
+					"period_hours": "Only earthquakes from the last",
+					"reviewed_only": "Only earthquakes checked by SGC",
+					"map_app": "Map links open in"
+				},
+				"data_description": {
+					"zone": "Earthquakes inside this zone are shown.",
+					"feed": "Which SGC earthquake list to use.",
+					"minimum_magnitude": "Leave out smaller earthquakes.",
+					"minimum_shaking": "How strongly an earthquake must be felt at the zone center.",
+					"period_hours": "Leave empty to show the whole list.",
+					"reviewed_only": "Wait until SGC has checked the location and magnitude.",
+					"map_app": "Where links to an earthquake's location open."
+				}
+			},
+			"reconfigure": {
+				"title": "Change zone or list",
+				"description": "Pick another zone or earthquake list.",
+				"data": {
+					"zone": "Zone",
+					"feed": "Earthquake list"
+				},
+				"data_description": {
+					"zone": "Earthquakes inside this zone are shown.",
+					"feed": "Which SGC earthquake list to use."
+				}
+			}
+		},
+		"error": {
+			"zone_not_found": "Pick a zone. The chosen entity is not a zone or does not exist.",
+			"zone_too_small": "The zone {zone} has a radius of only {radius} m, so hardly any earthquake would be inside it. Make the zone larger or pick another one.",
+			"blocked": "The SGC server refused the request. Try again later.",
+			"cannot_connect": "Could not read the SGC earthquake list. Check your internet connection and try again.",
+			"already_configured": "This zone already uses this earthquake list."
+		},
+		"abort": {
+			"already_configured": "This zone already uses this earthquake list.",
+			"reconfigure_successful": "The zone and list are changed."
+		}
+	},
+	"options": {
+		"step": {
+			"init": {
+				"title": "Filters and map links",
+				"description": "Choose which earthquakes to show and where map links open.",
+				"data": {
+					"minimum_magnitude": "Minimum magnitude",
+					"minimum_shaking": "Minimum shaking at zone center",
+					"period_hours": "Only earthquakes from the last",
+					"reviewed_only": "Only earthquakes checked by SGC",
+					"map_app": "Map links open in"
+				},
+				"data_description": {
+					"minimum_magnitude": "Leave out smaller earthquakes.",
+					"minimum_shaking": "How strongly an earthquake must be felt at the zone center.",
+					"period_hours": "Leave empty to show the whole list.",
+					"reviewed_only": "Wait until SGC has checked the location and magnitude.",
+					"map_app": "Where links to an earthquake's location open."
+				}
+			}
+		}
+	},
+	"selector": {
+		"feed": {
+			"options": {
+				"five_days_2": "Last 5 days, magnitude 2.0 and up",
+				"five_days_all": "Last 5 days, all magnitudes",
+				"thirty_days_important": "Last 30 days, notable earthquakes",
+				"sixty_days_4": "Last 60 days, magnitude 4.0 and up",
+				"international": "International earthquakes"
+			}
+		},
+		"minimum_shaking": {
+			"options": {
+				"any": "Any",
+				"weak": "Weak or more",
+				"light": "Light or more",
+				"moderate": "Moderate or more",
+				"strong": "Strong or more"
+			}
+		},
+		"period_hours": {
+			"unit_of_measurement": {
+				"hours": "hours"
+			}
+		},
+		"map_app": {
+			"options": {
+				"google_maps": "Google Maps",
+				"apple_maps": "Apple Maps"
+			}
+		}
+	},
+	"entity": {
+		"geo_location": {
+			"earthquake": {
+				"state_attributes": {
+					"external_id": {
+						"name": "Earthquake ID"
+					},
+					"magnitude": {
+						"name": "Magnitude"
+					},
+					"magnitude_type": {
+						"name": "Magnitude type"
+					},
+					"place": {
+						"name": "Place"
+					},
+					"nearby_towns": {
+						"name": "Nearby towns"
+					},
+					"depth_km": {
+						"name": "Depth in km"
+					},
+					"time": {
+						"name": "Time"
+					},
+					"time_source": {
+						"name": "Time in Colombia"
+					},
+					"updated": {
+						"name": "Last changed by SGC"
+					},
+					"status": {
+						"name": "Status",
+						"state": {
+							"automatic": "Not yet checked by SGC",
+							"manual": "Checked by SGC"
+						}
+					},
+					"agency": {
+						"name": "Reported by"
+					},
+					"felt_reports": {
+						"name": "People who reported feeling it"
+					},
+					"intensity": {
+						"name": "Measured shaking at the earthquake (MMI)"
+					},
+					"intensity_level": {
+						"name": "Measured shaking at the earthquake",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking": {
+						"name": "Estimated shaking at zone center",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Estimated shaking at zone center (MMI)"
+					},
+					"color": {
+						"name": "Shaking color",
+						"state": {
+							"green": "Green",
+							"yellow": "Yellow",
+							"orange": "Orange",
+							"red": "Red"
+						}
+					},
+					"url": {
+						"name": "SGC page"
+					},
+					"map_url": {
+						"name": "Map link"
+					}
+				}
+			}
+		},
+		"sensor": {
+			"earthquakes": {
+				"name": "Earthquakes in zone"
+			},
+			"latest_magnitude": {
+				"name": "Magnitude of latest earthquake",
+				"state_attributes": {
+					"place": {
+						"name": "Place"
+					},
+					"magnitude": {
+						"name": "Magnitude"
+					},
+					"shaking": {
+						"name": "Estimated shaking at zone center",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Estimated shaking at zone center (MMI)"
+					},
+					"color": {
+						"name": "Shaking color",
+						"state": {
+							"green": "Green",
+							"yellow": "Yellow",
+							"orange": "Orange",
+							"red": "Red"
+						}
+					},
+					"time": {
+						"name": "Time"
+					},
+					"time_source": {
+						"name": "Time in Colombia"
+					},
+					"distance_km": {
+						"name": "Distance from zone center in km"
+					},
+					"depth_km": {
+						"name": "Depth in km"
+					},
+					"external_id": {
+						"name": "Earthquake ID"
+					},
+					"url": {
+						"name": "SGC page"
+					},
+					"map_url": {
+						"name": "Map link"
+					}
+				}
+			},
+			"strongest_magnitude": {
+				"name": "Magnitude of strongest earthquake",
+				"state_attributes": {
+					"place": {
+						"name": "Place"
+					},
+					"magnitude": {
+						"name": "Magnitude"
+					},
+					"shaking": {
+						"name": "Estimated shaking at zone center",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Estimated shaking at zone center (MMI)"
+					},
+					"color": {
+						"name": "Shaking color",
+						"state": {
+							"green": "Green",
+							"yellow": "Yellow",
+							"orange": "Orange",
+							"red": "Red"
+						}
+					},
+					"time": {
+						"name": "Time"
+					},
+					"time_source": {
+						"name": "Time in Colombia"
+					},
+					"distance_km": {
+						"name": "Distance from zone center in km"
+					},
+					"depth_km": {
+						"name": "Depth in km"
+					},
+					"external_id": {
+						"name": "Earthquake ID"
+					},
+					"url": {
+						"name": "SGC page"
+					},
+					"map_url": {
+						"name": "Map link"
+					}
+				}
+			},
+			"strongest_magnitude_historic": {
+				"name": "Magnitude of strongest earthquake (historic)",
+				"state_attributes": {
+					"place": {
+						"name": "Place"
+					},
+					"magnitude": {
+						"name": "Magnitude"
+					},
+					"shaking": {
+						"name": "Estimated shaking at zone center",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Estimated shaking at zone center (MMI)"
+					},
+					"color": {
+						"name": "Shaking color",
+						"state": {
+							"green": "Green",
+							"yellow": "Yellow",
+							"orange": "Orange",
+							"red": "Red"
+						}
+					},
+					"time": {
+						"name": "Time"
+					},
+					"time_source": {
+						"name": "Time in Colombia"
+					},
+					"distance_km": {
+						"name": "Distance from zone center in km"
+					},
+					"depth_km": {
+						"name": "Depth in km"
+					},
+					"external_id": {
+						"name": "Earthquake ID"
+					},
+					"url": {
+						"name": "SGC page"
+					},
+					"map_url": {
+						"name": "Map link"
+					}
+				}
+			},
+			"strongest_shaking": {
+				"name": "Strongest shaking at zone center",
+				"state_attributes": {
+					"place": {
+						"name": "Place"
+					},
+					"magnitude": {
+						"name": "Magnitude"
+					},
+					"shaking": {
+						"name": "Estimated shaking at zone center",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Estimated shaking at zone center (MMI)"
+					},
+					"color": {
+						"name": "Shaking color",
+						"state": {
+							"green": "Green",
+							"yellow": "Yellow",
+							"orange": "Orange",
+							"red": "Red"
+						}
+					},
+					"time": {
+						"name": "Time"
+					},
+					"time_source": {
+						"name": "Time in Colombia"
+					},
+					"distance_km": {
+						"name": "Distance from zone center in km"
+					},
+					"depth_km": {
+						"name": "Depth in km"
+					},
+					"external_id": {
+						"name": "Earthquake ID"
+					},
+					"url": {
+						"name": "SGC page"
+					},
+					"map_url": {
+						"name": "Map link"
+					}
+				}
+			},
+			"strongest_shaking_historic": {
+				"name": "Strongest shaking at zone center (historic)",
+				"state_attributes": {
+					"place": {
+						"name": "Place"
+					},
+					"magnitude": {
+						"name": "Magnitude"
+					},
+					"shaking": {
+						"name": "Estimated shaking at zone center",
+						"state": {
+							"not_felt": "Not felt",
+							"weak": "Weak",
+							"light": "Light",
+							"moderate": "Moderate",
+							"strong": "Strong",
+							"very_strong": "Very strong",
+							"severe": "Severe",
+							"violent": "Violent",
+							"extreme": "Extreme"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Estimated shaking at zone center (MMI)"
+					},
+					"color": {
+						"name": "Shaking color",
+						"state": {
+							"green": "Green",
+							"yellow": "Yellow",
+							"orange": "Orange",
+							"red": "Red"
+						}
+					},
+					"time": {
+						"name": "Time"
+					},
+					"time_source": {
+						"name": "Time in Colombia"
+					},
+					"distance_km": {
+						"name": "Distance from zone center in km"
+					},
+					"depth_km": {
+						"name": "Depth in km"
+					},
+					"external_id": {
+						"name": "Earthquake ID"
+					},
+					"url": {
+						"name": "SGC page"
+					},
+					"map_url": {
+						"name": "Map link"
+					}
+				}
+			}
+		}
+	},
+	"exceptions": {
+		"blocked": {
+			"message": "The SGC server refused the request for {url}. Try again later."
+		},
+		"cannot_connect": {
+			"message": "Could not read the SGC earthquake list {url}: {error}"
+		},
+		"zone_not_found": {
+			"message": "The zone {zone} does not exist anymore. Pick another zone under Reconfigure."
+		}
+	}
+}
