@@ -10,7 +10,7 @@ import logging
 from typing import Any
 from urllib.parse import quote
 
-from aiohttp import ClientError, ClientSession, ClientTimeout, hdrs
+from aiohttp import ClientError, ClientTimeout, hdrs
 
 from homeassistant.components.zone import ATTR_RADIUS
 from homeassistant.config_entries import ConfigEntry
@@ -21,6 +21,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 from homeassistant.util.location import distance
 
+from .certificate import sgc_ssl_context
 from .const import (
 	APPLE_MAPS_URL,
 	CONF_FEED,
@@ -101,17 +102,21 @@ def _measure(area: ZoneArea, quake: Earthquake) -> NearbyEarthquake | None:
 
 
 async def async_fetch_feed(
-	session: ClientSession, url: str, etag: str | None = None
+	hass: HomeAssistant, url: str, etag: str | None = None
 ) -> tuple[dict[str, Earthquake] | None, str | None]:
 	"""Download and read the feed. Returns None instead of earthquakes when unchanged."""
+	ssl_context = await hass.async_add_executor_job(sgc_ssl_context)
 	# Home Assistant's session sets its own User-Agent, which the server blocks,
 	# so it is replaced on each request.
 	headers = {hdrs.USER_AGENT: USER_AGENT}
 	if etag:
 		headers[hdrs.IF_NONE_MATCH] = etag
 	try:
-		async with session.get(
-			url, headers=headers, timeout=ClientTimeout(total=REQUEST_TIMEOUT)
+		async with async_get_clientsession(hass).get(
+			url,
+			headers=headers,
+			ssl=ssl_context,
+			timeout=ClientTimeout(total=REQUEST_TIMEOUT),
 		) as response:
 			if response.status == HTTPStatus.NOT_MODIFIED:
 				return None, etag
@@ -146,7 +151,6 @@ class SgcCoordinator(DataUpdateCoordinator[dict[str, NearbyEarthquake]]):
 			name=f"{DOMAIN} {entry.title}",
 			update_interval=UPDATE_INTERVAL,
 		)
-		self._session = async_get_clientsession(hass)
 		# The zone and list this coordinator was built for. Another zone or list
 		# needs a reload, other settings apply at once.
 		self.source: dict[str, Any] = dict(entry.data)
@@ -162,7 +166,7 @@ class SgcCoordinator(DataUpdateCoordinator[dict[str, NearbyEarthquake]]):
 		try:
 			# Only ask for "unchanged" when there is something to reuse.
 			quakes, etag = await async_fetch_feed(
-				self._session, self.feed_url, self._etag if self.feed else None
+				self.hass, self.feed_url, self._etag if self.feed else None
 			)
 		except FeedBlocked as err:
 			raise UpdateFailed(

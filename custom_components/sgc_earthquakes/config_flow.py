@@ -9,7 +9,6 @@ import probatio
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
 from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
 	CONF_FEED,
@@ -178,10 +177,7 @@ class SgcEarthquakesConfigFlow(ConfigFlow, domain=DOMAIN):
 		if area.radius_m < MINIMUM_ZONE_RADIUS_M:
 			return {CONF_ZONE: "zone_too_small"}, placeholders, ""
 		try:
-			await async_fetch_feed(
-				async_get_clientsession(self.hass),
-				FEED_URL.format(feed=user_input[CONF_FEED]),
-			)
+			await async_fetch_feed(self.hass, FEED_URL.format(feed=user_input[CONF_FEED]))
 		except FeedBlocked:
 			return {"base": "blocked"}, placeholders, ""
 		except FeedError:
