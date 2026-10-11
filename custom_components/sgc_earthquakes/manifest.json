@@ -9,5 +9,5 @@
 	"iot_class": "cloud_polling",
 	"issue_tracker": "https://github.com/mm98/ha-sgc-earthquakes/issues",
 	"requirements": [],
-	"version": "0.12.0"
+	"version": "0.12.1"
 }
