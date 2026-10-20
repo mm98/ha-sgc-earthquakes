@@ -188,7 +188,7 @@ Why skip old earthquakes? After **Reconfigure**, every earthquake in the list co
 
 ## Problems and ideas
 
-Tell us on [GitHub](https://github.com/mm98/ha-sgc-earthquakes/issues). It helps to add the diagnostics: on the integration's page, open the three dots and pick **Download diagnostics**. They contain your settings and the earthquakes found, but not where your zone is.
+Tell us on [GitHub](https://github.com/mm98/ha-sgc-earthquakes/issues). It helps to add the diagnostics: on the integration's page, open the three dots and pick **Download diagnostics**. They contain your settings, the zone's size and the earthquakes found, but not which zone you picked or how far each earthquake is from it.
 
 ## Credits
 
