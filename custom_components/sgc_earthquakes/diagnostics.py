@@ -5,10 +5,15 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Any
 
+from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntry
 
+from .const import CONF_ZONE
 from .coordinator import SgcConfigEntry
+
+# The zone's entity id (like zone.ibague) often names where the user lives.
+TO_REDACT = {CONF_ZONE}
 
 
 async def async_get_config_entry_diagnostics(
@@ -18,19 +23,16 @@ async def async_get_config_entry_diagnostics(
 	coordinator = entry.runtime_data
 	area = coordinator.area
 	return {
-		"data": dict(entry.data),
+		"data": async_redact_data(entry.data, TO_REDACT),
 		"options": dict(entry.options),
 		"feed_url": coordinator.feed_url,
 		"zone_radius_km": round(area.radius_m / 1000, 1) if area else None,
 		"last_update_success": coordinator.last_update_success,
 		"earthquakes_in_feed": len(coordinator.feed),
+		# Without the distance to the zone center, or the shaking that follows
+		# from it: three earthquakes with their distances pin the center down.
 		"earthquakes_in_zone": [
-			{
-				**asdict(nearby.quake),
-				"distance_km": round(nearby.distance_km, 1),
-				"shaking_mmi": round(nearby.intensity, 2),
-			}
-			for nearby in (coordinator.data or {}).values()
+			asdict(nearby.quake) for nearby in (coordinator.data or {}).values()
 		],
 	}
 
