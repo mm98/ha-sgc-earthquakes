@@ -54,6 +54,7 @@ Then pick your zone and choose which earthquakes to show:
 | Zone | The area to watch. |
 | Earthquake list | Which SGC list to use. See the lists below. |
 | Minimum magnitude | Leaves out smaller earthquakes. The default is 3.0. |
+| Warning magnitude | An earthquake this strong or stronger turns on **Earthquake warning** for an hour. During that hour the list is checked every 2 minutes instead of every 5, because SGC often corrects a big earthquake soon after and aftershocks follow. The default is 4.0. It cannot be lower than the minimum magnitude. |
 | Minimum shaking at zone center | Only shows earthquakes that are felt at least this much at the center of your zone: Any (the default), Weak, Light, Moderate or Strong. See **How strongly was it felt?** below. |
 | Only earthquakes from the last | For example 24 hours for the last day. Leave it empty to show the whole list. |
 | Only earthquakes checked by SGC | Waits until an SGC expert has checked the earthquake. The first, automatic location can be wrong, sometimes by more than 100 km. The check usually takes less than half an hour, but small earthquakes can wait a day or more. |
@@ -98,6 +99,11 @@ When SGC corrects an earthquake, for example its magnitude or place, the map fol
 | Magnitude of strongest earthquake (historic) | The highest magnitude since you set up the integration, also after that earthquake is gone |
 | Strongest shaking at zone center | The strongest shaking among the earthquakes shown now |
 | Strongest shaking at zone center (historic) | The strongest shaking since you set up the integration |
+| Warning magnitude | The warning magnitude from the settings, so automations can use it |
+
+### Earthquake warning
+
+**Earthquake warning** turns on when an earthquake at or above your warning magnitude happened in your zone less than an hour ago, and turns off again after that hour. While it is on, it shows the strongest of those earthquakes with its place, time and links, and the warning magnitude itself.
 
 The historic sensors keep their record when Home Assistant restarts. They start over when you pick another zone or list.
 
@@ -180,9 +186,34 @@ Why the first condition? Home Assistant sometimes starts an automation twice for
 
 Why skip old earthquakes? After **Reconfigure**, every earthquake in the list counts as new once. The time check stops a notification for each of them. If you turned on **Only earthquakes checked by SGC**, use 24 hours instead of 6, because the check can take a while. Changing settings with **Configure** or restarting Home Assistant does not make earthquakes count as new.
 
+### A notification when the warning turns on
+
+```yaml
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.sgc_earthquakes_ibague_earthquake_warning
+    to: "on"
+actions:
+  - action: notify.notify
+    data:
+      message: >
+        Warning: {{ state_attr(trigger.entity_id, 'place') }},
+        magnitude {{ state_attr(trigger.entity_id, 'magnitude') }}
+        (warning from {{ state_attr(trigger.entity_id, 'warning_magnitude') }}).
+```
+
+The warning stays on for the whole hour, so a second strong earthquake in that hour does not turn it on again. To hear about every one of them, use the earthquake notification above and add a condition with the **Warning magnitude** sensor:
+
+```yaml
+  - condition: template
+    value_template: >
+      {{ trigger.to_state.attributes.magnitude
+         >= states('sensor.sgc_earthquakes_ibague_warning_magnitude') | float(0) }}
+```
+
 ## Good to know
 
-- New earthquakes show up about 3 to 8 minutes after they happen.
+- New earthquakes show up about 3 to 8 minutes after they happen. The list is checked every 5 minutes, and every 2 minutes during a warning.
 - If your internet or the SGC website is down, the earthquakes stay on the map, and the sensors show as unavailable until it works again.
 - Times are shown in your own time zone. **Time in Colombia** always shows the Colombian time, as SGC gives it.
 

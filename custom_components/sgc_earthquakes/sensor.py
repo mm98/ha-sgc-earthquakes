@@ -11,14 +11,13 @@ from homeassistant.components.sensor import (
 	SensorEntityDescription,
 	SensorStateClass,
 )
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.restore_state import ExtraStoredData, RestoreEntity
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, EVENT_URL, MANUFACTURER, SGC_EARTHQUAKES_PAGE
 from .coordinator import SgcConfigEntry, SgcCoordinator
+from .entity import SgcEntity, quake_details
 from .models import Earthquake, NearbyEarthquake, quake_from_dict, quake_to_dict
 
 # Nothing is polled per entity, the coordinator pushes every update.
@@ -45,27 +44,6 @@ def _magnitude(nearby: NearbyEarthquake) -> float:
 
 def _shaking(nearby: NearbyEarthquake) -> float:
 	return round(nearby.intensity, 1)
-
-
-def _details(coordinator: SgcCoordinator, nearby: NearbyEarthquake | None) -> dict[str, Any]:
-	if nearby is None:
-		return {}
-	quake = nearby.quake
-	return {
-		"place": quake.place,
-		"magnitude": quake.magnitude,
-		"shaking": nearby.shaking,
-		"shaking_mmi": round(nearby.intensity, 1),
-		"color": nearby.color,
-		"time": quake.time,
-		"time_source": quake.time_source,
-		"distance_km": round(nearby.distance_km, 1),
-		"depth_km": quake.depth_km,
-		# No latitude and longitude: the map would show the sensor as a second marker.
-		"external_id": quake.id,
-		"url": EVENT_URL.format(id=quake.id),
-		"map_url": coordinator.map_url(quake),
-	}
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -136,31 +114,13 @@ async def async_setup_entry(
 		(SgcHistoricSensor if description.historic else SgcSensor)(coordinator, description)
 		for description in SENSORS
 	)
+	async_add_entities([SgcWarningMagnitudeSensor(coordinator, WARNING_MAGNITUDE)])
 
 
-class SgcSensor(CoordinatorEntity[SgcCoordinator], SensorEntity):
+class SgcSensor(SgcEntity, SensorEntity):
 	"""A number about the earthquakes shown now."""
 
-	_attr_has_entity_name = True
-	_attr_attribution = MANUFACTURER
 	entity_description: SgcSensorEntityDescription
-
-	def __init__(
-		self, coordinator: SgcCoordinator, description: SgcSensorEntityDescription
-	) -> None:
-		"""Attach the sensor to the entry's device."""
-		super().__init__(coordinator)
-		self.entity_description = description
-		entry = coordinator.config_entry
-		self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-		self._attr_device_info = DeviceInfo(
-			identifiers={(DOMAIN, entry.entry_id)},
-			entry_type=DeviceEntryType.SERVICE,
-			manufacturer=MANUFACTURER,
-			model="Earthquake feed",
-			name=f"SGC Earthquakes {entry.title}",
-			configuration_url=SGC_EARTHQUAKES_PAGE,
-		)
 
 	def _picked(self) -> NearbyEarthquake | None:
 		rank = self.entity_description.rank
@@ -179,7 +139,29 @@ class SgcSensor(CoordinatorEntity[SgcCoordinator], SensorEntity):
 		"""Where and when the picked earthquake happened."""
 		if self.entity_description.rank is None:
 			return None
-		return _details(self.coordinator, self._picked())
+		return quake_details(self.coordinator, self._picked())
+
+
+WARNING_MAGNITUDE = SensorEntityDescription(
+	key="warning_magnitude",
+	translation_key="warning_magnitude",
+	entity_category=EntityCategory.DIAGNOSTIC,
+	suggested_display_precision=1,
+)
+
+
+class SgcWarningMagnitudeSensor(SgcEntity, SensorEntity):
+	"""The warning magnitude from the settings, to compare with in automations."""
+
+	@property
+	def available(self) -> bool:
+		"""A setting is known also while the list cannot be downloaded."""
+		return True
+
+	@property
+	def native_value(self) -> float:
+		"""The magnitude from which an earthquake counts as a warning."""
+		return self.coordinator.warning_magnitude
 
 
 @dataclass
@@ -247,7 +229,7 @@ class SgcHistoricSensor(SgcSensor, RestoreEntity):
 	@property
 	def extra_state_attributes(self) -> dict[str, Any] | None:
 		"""Where and when the record earthquake happened."""
-		return _details(self.coordinator, self._record_nearby())
+		return quake_details(self.coordinator, self._record_nearby())
 
 	@property
 	def extra_restore_state_data(self) -> _HistoricData:

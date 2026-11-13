@@ -1,5 +1,13 @@
 {
 	"entity": {
+		"binary_sensor": {
+			"warning": {
+				"default": "mdi:alert-outline",
+				"state": {
+					"on": "mdi:alert"
+				}
+			}
+		},
 		"sensor": {
 			"earthquakes": {
 				"default": "mdi:pulse"
@@ -18,6 +26,9 @@
 			},
 			"strongest_shaking_historic": {
 				"default": "mdi:history"
+			},
+			"warning_magnitude": {
+				"default": "mdi:alert-circle-outline"
 			}
 		}
 	}

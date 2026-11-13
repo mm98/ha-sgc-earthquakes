@@ -30,8 +30,10 @@ from .const import (
 	CONF_MINIMUM_SHAKING,
 	CONF_PERIOD_HOURS,
 	CONF_REVIEWED_ONLY,
+	CONF_WARNING_MAGNITUDE,
 	CONF_ZONE,
 	DEFAULT_MINIMUM_MAGNITUDE,
+	DEFAULT_WARNING_MAGNITUDE,
 	DOMAIN,
 	FEED_URL,
 	GOOGLE_MAPS_URL,
@@ -42,6 +44,8 @@ from .const import (
 	STATUS_REVIEWED,
 	UPDATE_INTERVAL,
 	USER_AGENT,
+	WARNING_PERIOD,
+	WARNING_UPDATE_INTERVAL,
 )
 from .models import (
 	Earthquake,
@@ -87,6 +91,17 @@ def zone_area(state: State | None) -> ZoneArea | None:
 		)
 	except (KeyError, TypeError, ValueError):
 		return None
+
+
+def warning_magnitude(options: Mapping[str, Any]) -> float:
+	"""The warning magnitude, also for entries from before it could be set.
+
+	Those can have a minimum above the default, so 1 above the minimum is used then.
+	"""
+	if CONF_WARNING_MAGNITUDE in options:
+		return options[CONF_WARNING_MAGNITUDE]
+	minimum = options.get(CONF_MINIMUM_MAGNITUDE, DEFAULT_MINIMUM_MAGNITUDE)
+	return max(DEFAULT_WARNING_MAGNITUDE, minimum + 1)
 
 
 def _measure(area: ZoneArea, quake: Earthquake) -> NearbyEarthquake | None:
@@ -160,6 +175,8 @@ class SgcCoordinator(DataUpdateCoordinator[dict[str, NearbyEarthquake]]):
 		self.area: ZoneArea | None = None
 		self.feed: dict[str, Earthquake] = {}
 		self._etag: str | None = None
+		# The strongest earthquake of the last hour at or above the warning magnitude.
+		self.warning: NearbyEarthquake | None = None
 
 	async def _async_update_data(self) -> dict[str, NearbyEarthquake]:
 		area = self._area()
@@ -184,7 +201,7 @@ class SgcCoordinator(DataUpdateCoordinator[dict[str, NearbyEarthquake]]):
 			self.feed = quakes
 			self._etag = etag
 		# Selected on every poll, also when the list is unchanged, so earthquakes
-		# drop out once they are older than the period.
+		# drop out once they are older than the period, and the warning ends.
 		return self._select(area)
 
 	def _area(self) -> ZoneArea:
@@ -214,7 +231,26 @@ class SgcCoordinator(DataUpdateCoordinator[dict[str, NearbyEarthquake]]):
 			if self.minimum_intensity is not None and nearby.intensity < self.minimum_intensity:
 				continue
 			selected[quake.id] = nearby
+		self._update_warning(selected)
 		return selected
+
+	def _update_warning(self, selected: Mapping[str, NearbyEarthquake]) -> None:
+		"""Find a recent strong earthquake, and poll faster while there is one."""
+		recent = dt_util.utcnow() - WARNING_PERIOD
+		self.warning = max(
+			(
+				nearby
+				for nearby in selected.values()
+				if nearby.quake.magnitude >= self.warning_magnitude
+				and nearby.quake.time >= recent
+			),
+			key=lambda nearby: (nearby.quake.magnitude, nearby.quake.time),
+			default=None,
+		)
+		interval = WARNING_UPDATE_INTERVAL if self.warning else UPDATE_INTERVAL
+		if interval != self.update_interval:
+			_LOGGER.debug("Reading %s every %s from now on", self.feed_url, interval)
+			self.update_interval = interval
 
 	def nearby(self, quake: Earthquake) -> NearbyEarthquake | None:
 		"""Distance and estimated shaking at the zone center, also for a stored earthquake."""
@@ -224,6 +260,7 @@ class SgcCoordinator(DataUpdateCoordinator[dict[str, NearbyEarthquake]]):
 		self.minimum_magnitude: float = options.get(
 			CONF_MINIMUM_MAGNITUDE, DEFAULT_MINIMUM_MAGNITUDE
 		)
+		self.warning_magnitude: float = warning_magnitude(options)
 		shaking = options.get(CONF_MINIMUM_SHAKING, SHAKING_ANY)
 		self.minimum_intensity: float | None = (
 			None if shaking == SHAKING_ANY else level_start(shaking)
