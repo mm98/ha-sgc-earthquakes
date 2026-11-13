@@ -9,7 +9,7 @@ from homeassistant.helpers.event import async_track_state_change_event
 
 from .coordinator import SgcConfigEntry, SgcCoordinator
 
-PLATFORMS: list[Platform] = [Platform.GEO_LOCATION, Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.GEO_LOCATION, Platform.SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: SgcConfigEntry) -> bool:

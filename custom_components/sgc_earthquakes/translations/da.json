@@ -8,6 +8,7 @@
 					"zone": "Zone",
 					"feed": "Jordskælvsliste",
 					"minimum_magnitude": "Mindste styrke",
+					"warning_magnitude": "Advarselsstyrke",
 					"minimum_shaking": "Mindste rystelse i zonens centrum",
 					"period_hours": "Kun jordskælv fra de seneste",
 					"reviewed_only": "Kun jordskælv tjekket af SGC",
@@ -17,6 +18,7 @@
 					"zone": "Jordskælv inden for denne zone vises.",
 					"feed": "Hvilken jordskælvsliste fra SGC der bruges.",
 					"minimum_magnitude": "Udelad mindre jordskælv.",
+					"warning_magnitude": "Jordskælv af denne styrke eller kraftigere slår advarslen til i en time, og imens læses listen hvert andet minut.",
 					"minimum_shaking": "Hvor kraftigt et jordskælv skal mærkes i zonens centrum.",
 					"period_hours": "Lad feltet stå tomt for at vise hele listen.",
 					"reviewed_only": "Vent, til SGC har tjekket sted og styrke.",
@@ -41,7 +43,8 @@
 			"zone_too_small": "Zonen {zone} har en radius på kun {radius} m, så næsten intet jordskælv vil ligge inden for den. Gør zonen større, eller vælg en anden.",
 			"blocked": "SGC's server afviste forespørgslen. Prøv igen senere.",
 			"cannot_connect": "Kunne ikke læse jordskælvslisten fra SGC. Tjek din internetforbindelse, og prøv igen.",
-			"already_configured": "Denne zone bruger allerede denne jordskælvsliste."
+			"already_configured": "Denne zone bruger allerede denne jordskælvsliste.",
+			"warning_below_minimum": "Advarselsstyrken kan ikke være lavere end den mindste styrke."
 		},
 		"abort": {
 			"already_configured": "Denne zone bruger allerede denne jordskælvsliste.",
@@ -55,6 +58,7 @@
 				"description": "Vælg, hvilke jordskælv der vises, og hvor kortlinks åbner.",
 				"data": {
 					"minimum_magnitude": "Mindste styrke",
+					"warning_magnitude": "Advarselsstyrke",
 					"minimum_shaking": "Mindste rystelse i zonens centrum",
 					"period_hours": "Kun jordskælv fra de seneste",
 					"reviewed_only": "Kun jordskælv tjekket af SGC",
@@ -62,12 +66,16 @@
 				},
 				"data_description": {
 					"minimum_magnitude": "Udelad mindre jordskælv.",
+					"warning_magnitude": "Jordskælv af denne styrke eller kraftigere slår advarslen til i en time, og imens læses listen hvert andet minut.",
 					"minimum_shaking": "Hvor kraftigt et jordskælv skal mærkes i zonens centrum.",
 					"period_hours": "Lad feltet stå tomt for at vise hele listen.",
 					"reviewed_only": "Vent, til SGC har tjekket sted og styrke.",
 					"map_app": "Hvor links til et jordskælvs placering åbner."
 				}
 			}
+		},
+		"error": {
+			"warning_below_minimum": "Advarselsstyrken kan ikke være lavere end den mindste styrke."
 		}
 	},
 	"selector": {
@@ -102,6 +110,69 @@
 		}
 	},
 	"entity": {
+		"binary_sensor": {
+			"warning": {
+				"name": "Jordskælvsadvarsel",
+				"state_attributes": {
+					"warning_magnitude": {
+						"name": "Advarselsstyrke"
+					},
+					"place": {
+						"name": "Sted"
+					},
+					"magnitude": {
+						"name": "Styrke"
+					},
+					"shaking": {
+						"name": "Anslået rystelse i zonens centrum",
+						"state": {
+							"not_felt": "Ikke mærket",
+							"weak": "Svag",
+							"light": "Let",
+							"moderate": "Moderat",
+							"strong": "Kraftig",
+							"very_strong": "Meget kraftig",
+							"severe": "Alvorlig",
+							"violent": "Voldsom",
+							"extreme": "Ekstrem"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Anslået rystelse i zonens centrum (MMI)"
+					},
+					"color": {
+						"name": "Farve for rystelse",
+						"state": {
+							"green": "Grøn",
+							"yellow": "Gul",
+							"orange": "Orange",
+							"red": "Rød"
+						}
+					},
+					"time": {
+						"name": "Tidspunkt"
+					},
+					"time_source": {
+						"name": "Tidspunkt i Colombia"
+					},
+					"distance_km": {
+						"name": "Afstand fra zonens centrum i km"
+					},
+					"depth_km": {
+						"name": "Dybde i km"
+					},
+					"external_id": {
+						"name": "Jordskælvs-id"
+					},
+					"url": {
+						"name": "Side hos SGC"
+					},
+					"map_url": {
+						"name": "Kortlink"
+					}
+				}
+			}
+		},
 		"geo_location": {
 			"earthquake": {
 				"state_attributes": {
@@ -490,6 +561,9 @@
 						"name": "Kortlink"
 					}
 				}
+			},
+			"warning_magnitude": {
+				"name": "Advarselsstyrke"
 			}
 		}
 	},

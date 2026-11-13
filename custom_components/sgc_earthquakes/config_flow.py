@@ -17,9 +17,11 @@ from .const import (
 	CONF_MINIMUM_SHAKING,
 	CONF_PERIOD_HOURS,
 	CONF_REVIEWED_ONLY,
+	CONF_WARNING_MAGNITUDE,
 	CONF_ZONE,
 	DEFAULT_FEED,
 	DEFAULT_MINIMUM_MAGNITUDE,
+	DEFAULT_WARNING_MAGNITUDE,
 	DOMAIN,
 	FEED_URL,
 	FEEDS,
@@ -30,10 +32,18 @@ from .const import (
 	MINIMUM_ZONE_RADIUS_M,
 	SHAKING_ANY,
 )
-from .coordinator import FeedBlocked, FeedError, SgcConfigEntry, async_fetch_feed, zone_area
+from .coordinator import (
+	FeedBlocked,
+	FeedError,
+	SgcConfigEntry,
+	async_fetch_feed,
+	warning_magnitude,
+	zone_area,
+)
 
 OPTIONS = (
 	CONF_MINIMUM_MAGNITUDE,
+	CONF_WARNING_MAGNITUDE,
 	CONF_MINIMUM_SHAKING,
 	CONF_PERIOD_HOURS,
 	CONF_REVIEWED_ONLY,
@@ -43,6 +53,13 @@ OPTIONS = (
 OPTION_FIELDS = {
 	probatio.Required(
 		CONF_MINIMUM_MAGNITUDE, default=DEFAULT_MINIMUM_MAGNITUDE
+	): selector.NumberSelector(
+		selector.NumberSelectorConfig(
+			min=0, max=10, step=0.1, mode=selector.NumberSelectorMode.BOX
+		)
+	),
+	probatio.Required(
+		CONF_WARNING_MAGNITUDE, default=DEFAULT_WARNING_MAGNITUDE
 	): selector.NumberSelector(
 		selector.NumberSelectorConfig(
 			min=0, max=10, step=0.1, mode=selector.NumberSelectorMode.BOX
@@ -117,6 +134,7 @@ class SgcEarthquakesConfigFlow(ConfigFlow, domain=DOMAIN):
 		placeholders: dict[str, str] = {}
 		if user_input is not None:
 			errors, placeholders, title = await self._async_validate(user_input)
+			errors = errors or _option_errors(user_input)
 			if not errors:
 				await self.async_set_unique_id(_unique_id(user_input))
 				self._abort_if_unique_id_configured()
@@ -192,14 +210,28 @@ class SgcEarthquakesOptionsFlow(OptionsFlow):
 		self, user_input: dict[str, Any] | None = None
 	) -> ConfigFlowResult:
 		"""Show the filters."""
+		errors: dict[str, str] = {}
 		if user_input is not None:
-			return self.async_create_entry(data=user_input)
+			errors = _option_errors(user_input)
+			if not errors:
+				return self.async_create_entry(data=user_input)
+		# Entries from before the warning magnitude existed show the value in use.
+		options = self.config_entry.options
+		current = {**options, CONF_WARNING_MAGNITUDE: warning_magnitude(options)}
 		return self.async_show_form(
 			step_id="init",
 			data_schema=self.add_suggested_values_to_schema(
-				OPTIONS_SCHEMA, dict(self.config_entry.options)
+				OPTIONS_SCHEMA, user_input or current
 			),
+			errors=errors,
 		)
+
+
+def _option_errors(user_input: dict[str, Any]) -> dict[str, str]:
+	"""Earthquakes below the minimum are never shown, so they cannot warn either."""
+	if user_input[CONF_WARNING_MAGNITUDE] < user_input[CONF_MINIMUM_MAGNITUDE]:
+		return {CONF_WARNING_MAGNITUDE: "warning_below_minimum"}
+	return {}
 
 
 def _unique_id(user_input: dict[str, Any]) -> str:

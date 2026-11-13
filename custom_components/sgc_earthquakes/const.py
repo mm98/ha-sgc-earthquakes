@@ -11,6 +11,7 @@ CONF_ZONE: Final = "zone"
 CONF_FEED: Final = "feed"
 CONF_MINIMUM_MAGNITUDE: Final = "minimum_magnitude"
 CONF_MINIMUM_SHAKING: Final = "minimum_shaking"
+CONF_WARNING_MAGNITUDE: Final = "warning_magnitude"
 CONF_PERIOD_HOURS: Final = "period_hours"
 CONF_REVIEWED_ONLY: Final = "reviewed_only"
 CONF_MAP_APP: Final = "map_app"
@@ -33,6 +34,14 @@ FEED_URL: Final = "https://archive.sgc.gov.co/feed/v1.0.1/summary/{feed}.json"
 # A 200 km zone around Ibague holds about 150 earthquakes of magnitude 3 or more
 # in five days during a swarm, and every one becomes an entity and a map marker.
 DEFAULT_MINIMUM_MAGNITUDE: Final = 3.0
+
+# An earthquake at least this strong counts as a warning for an hour after it
+# happened. SGC often corrects such an earthquake within that hour and
+# aftershocks follow, so the list is read every 2 minutes meanwhile. An unchanged
+# list costs little, because the server then only answers "not modified".
+DEFAULT_WARNING_MAGNITUDE: Final = 4.0
+WARNING_PERIOD: Final = timedelta(hours=1)
+WARNING_UPDATE_INTERVAL: Final = timedelta(minutes=2)
 
 # Levels the "minimum shaking at zone center" filter offers. Higher ones mean
 # damage, and those earthquakes already pass the lower settings.

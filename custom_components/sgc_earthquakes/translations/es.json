@@ -8,6 +8,7 @@
 					"zone": "Zona",
 					"feed": "Lista de sismos",
 					"minimum_magnitude": "Magnitud mínima",
+					"warning_magnitude": "Magnitud de alerta",
 					"minimum_shaking": "Intensidad mínima en el centro de la zona",
 					"period_hours": "Solo sismos de las últimas",
 					"reviewed_only": "Solo sismos revisados por el SGC",
@@ -17,6 +18,7 @@
 					"zone": "Se muestran los sismos dentro de esta zona.",
 					"feed": "Qué lista de sismos del SGC se usa.",
 					"minimum_magnitude": "Omite los sismos más pequeños.",
+					"warning_magnitude": "Los sismos de esta magnitud o mayor activan la alerta durante una hora, y mientras tanto la lista se lee cada 2 minutos.",
 					"minimum_shaking": "Con qué fuerza se debe sentir un sismo en el centro de la zona.",
 					"period_hours": "Déjalo vacío para mostrar toda la lista.",
 					"reviewed_only": "Espera a que el SGC revise el lugar y la magnitud.",
@@ -41,7 +43,8 @@
 			"zone_too_small": "La zona {zone} tiene un radio de solo {radius} m, así que casi ningún sismo quedaría dentro. Agranda la zona o elige otra.",
 			"blocked": "El servidor del SGC rechazó la solicitud. Inténtalo de nuevo más tarde.",
 			"cannot_connect": "No se pudo leer la lista de sismos del SGC. Revisa tu conexión a internet e inténtalo de nuevo.",
-			"already_configured": "Esta zona ya usa esta lista de sismos."
+			"already_configured": "Esta zona ya usa esta lista de sismos.",
+			"warning_below_minimum": "La magnitud de alerta no puede ser menor que la magnitud mínima."
 		},
 		"abort": {
 			"already_configured": "Esta zona ya usa esta lista de sismos.",
@@ -55,6 +58,7 @@
 				"description": "Elige qué sismos se muestran y dónde se abren los enlaces al mapa.",
 				"data": {
 					"minimum_magnitude": "Magnitud mínima",
+					"warning_magnitude": "Magnitud de alerta",
 					"minimum_shaking": "Intensidad mínima en el centro de la zona",
 					"period_hours": "Solo sismos de las últimas",
 					"reviewed_only": "Solo sismos revisados por el SGC",
@@ -62,12 +66,16 @@
 				},
 				"data_description": {
 					"minimum_magnitude": "Omite los sismos más pequeños.",
+					"warning_magnitude": "Los sismos de esta magnitud o mayor activan la alerta durante una hora, y mientras tanto la lista se lee cada 2 minutos.",
 					"minimum_shaking": "Con qué fuerza se debe sentir un sismo en el centro de la zona.",
 					"period_hours": "Déjalo vacío para mostrar toda la lista.",
 					"reviewed_only": "Espera a que el SGC revise el lugar y la magnitud.",
 					"map_app": "Dónde se abren los enlaces a la ubicación de un sismo."
 				}
 			}
+		},
+		"error": {
+			"warning_below_minimum": "La magnitud de alerta no puede ser menor que la magnitud mínima."
 		}
 	},
 	"selector": {
@@ -102,6 +110,69 @@
 		}
 	},
 	"entity": {
+		"binary_sensor": {
+			"warning": {
+				"name": "Alerta de sismo",
+				"state_attributes": {
+					"warning_magnitude": {
+						"name": "Magnitud de alerta"
+					},
+					"place": {
+						"name": "Lugar"
+					},
+					"magnitude": {
+						"name": "Magnitud"
+					},
+					"shaking": {
+						"name": "Intensidad estimada en el centro de la zona",
+						"state": {
+							"not_felt": "No sentido",
+							"weak": "Débil",
+							"light": "Leve",
+							"moderate": "Moderado",
+							"strong": "Fuerte",
+							"very_strong": "Muy fuerte",
+							"severe": "Severo",
+							"violent": "Violento",
+							"extreme": "Extremo"
+						}
+					},
+					"shaking_mmi": {
+						"name": "Intensidad estimada en el centro de la zona (MMI)"
+					},
+					"color": {
+						"name": "Color de la intensidad",
+						"state": {
+							"green": "Verde",
+							"yellow": "Amarillo",
+							"orange": "Naranja",
+							"red": "Rojo"
+						}
+					},
+					"time": {
+						"name": "Fecha y hora"
+					},
+					"time_source": {
+						"name": "Fecha y hora en Colombia"
+					},
+					"distance_km": {
+						"name": "Distancia al centro de la zona en km"
+					},
+					"depth_km": {
+						"name": "Profundidad en km"
+					},
+					"external_id": {
+						"name": "ID del sismo"
+					},
+					"url": {
+						"name": "Página del SGC"
+					},
+					"map_url": {
+						"name": "Enlace al mapa"
+					}
+				}
+			}
+		},
 		"geo_location": {
 			"earthquake": {
 				"state_attributes": {
@@ -490,6 +561,9 @@
 						"name": "Enlace al mapa"
 					}
 				}
+			},
+			"warning_magnitude": {
+				"name": "Magnitud de alerta"
 			}
 		}
 	},
